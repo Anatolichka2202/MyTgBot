@@ -1,35 +1,26 @@
-﻿cmake_minimum_required(VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.15)
 project(TelegramBot)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Пути к зависимостям
 set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
-set(BOOST_ROOT "C:/boost/boost_1_88_0")
 
-# Поиск библиотек
-find_package(Boost 1.88.0 REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenSSL REQUIRED)
-find_package(nlohmann_json 3.11.2 REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(TgBot REQUIRED)
+target_link_libraries(bot PRIVATE TgBot::TgBot)
 
-# Настройка путей
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${Boost_INCLUDE_DIRS}
-    ${OPENSSL_INCLUDE_DIR}
-    "C:/boost/boost_1_88_0"
-)
-
-# Исполняемый файл
 add_executable(bot
     src/bot.cpp
     src/telegram_api.cpp
 )
 
-# Линковка
-target_link_libraries(bot
-    PRIVATE
+target_include_directories(bot PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(bot PRIVATE
+    Boost::boost
     Boost::system
     OpenSSL::SSL
     OpenSSL::Crypto
